@@ -40,7 +40,7 @@ keywords = [
 python = ">=3.8"
 django = ">=3.2"
 playwright = ">=1.41.1"
-django-admin-row-actions = { git = "https://github.com/DjangoAdminHackers/django-admin-row-actions.git", branch = "feature/django4" }
+django-admin-row-actions = ">=0.10.0"
 django-object-actions = ">=4.1.0"
 django-constance = { version = ">3.0.0", extras = ["redis"] }
 lxml = ">5.0.0"
