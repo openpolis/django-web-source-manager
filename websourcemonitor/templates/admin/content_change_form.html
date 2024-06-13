@@ -1,0 +1,13 @@
+{% extends 'admin/change_form.html' %}
+
+{% block submit_buttons_top %}
+  {{ block.super }}
+  <div class="submit-row" style="text-align: right!important;">
+    {% if original.verification_status == 1 %}
+      <a href="{% url 'diff' original.id %}" target="_blank"><input type="button" value="Visualizza differenze" name="_showdiff-content"></a>
+    {% endif %}
+      <input type="submit" value="Verifica" name="_verify-content">
+<!--      <input type="submit" value="Segna come corretto in OP" name="_markcorrected-content">-->
+      <input type="submit" value="Reset" name="_reset-content">
+  </div>
+{% endblock %}

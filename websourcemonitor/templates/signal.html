@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block page_title %}VerificaFonti - Invio segnalazione di errore{% endblock %}
+{% block page_description %}Modulo di invio segnalazione errore{% endblock %}
+{% block content %}
+        <h1>{{ content.title }} </h1>
+        <div>Segnala un errore per questo contenuto.</div>
+        <br/>
+        <form action="" method ="POST" role="form" name="form_segnalazione">
+            {% csrf_token %}
+            {{ signal_form }}
+            <br/>
+            <input type ="submit" name ="Invia" class="btn btn-default" value ="Add">
+        </form>
+{% endblock %}

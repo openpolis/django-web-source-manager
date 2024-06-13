@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block page_title %}VerificaFonti - Visualizzatore differenze{% endblock %}
+{% block page_description %}Visualizzatore di differenze tra contenuto live e contenuto processato in OP{% endblock %}
+{% block content %}
+    <h1>{{ content.title }} </h1>
+    <div>La tabella mostra <b>le differenze</b> tra il contenuto nel nostro DB (a sinistra), e il testo ora sul sito (a
+        destra). <br/>
+        Per ogni differenza, la tabella mostra un blocco, dove sono evidenziatie in colori differenti
+        le aggiunte, le rimozioni e le modifiche, all'interno di un contesto composto dalle due righe precedenti
+        e dalle due successive alla modifica.
+    </div>
+    <br/>
+    <div>
+        vai <a href="{{ content.url }}" target="_blank">alla fonte</a>
+        {% if content.op_url %}
+            - vai <a href="{{ content.op_url }}" target="_blank">alla pagina openpolis</a>
+        {% endif %}
+    </div>
+    <br/>
+    <div>
+        {{ diff|safe }}
+        <br/>
+        <table class="diff" summary="Legends">
+            <tr>
+                <th colspan="2">Legende</th>
+            </tr>
+            <tr>
+                <td>
+                    <table border="" summary="Colors">
+                        <tr>
+                            <th>Colori</th>
+                        </tr>
+                        <tr>
+                            <td class="diff_add">Aggiunte</td>
+                        </tr>
+                        <tr>
+                            <td class="diff_chg">Modifiche</td>
+                        </tr>
+                        <tr>
+                            <td class="diff_sub">Rimozioni</td>
+                        </tr>
+                    </table>
+                </td>
+                <td>
+                    <table border="" summary="Links">
+                        <tr>
+                            <th colspan="2"> Links</th>
+                        </tr>
+                        <tr>
+                            <td>(f) prima modifica</td>
+                        </tr>
+                        <tr>
+                            <td>(n) prossima modifica</td>
+                        </tr>
+                        <tr>
+                            <td>(t) top</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </div>
+{% endblock %}
