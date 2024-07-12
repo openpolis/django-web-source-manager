@@ -29,7 +29,8 @@ class PlaywrightWrapper:
             self,
             proxy: Optional[dict] = None,
             request_ua: str = REQUESTS_UA,
-            request_timeout_sec: int = REQUESTS_MAX_TIMEOUT
+            request_timeout_sec: int = REQUESTS_MAX_TIMEOUT,
+            browser_set: Optional[str] = 'chrome'
     ):
         self.p = sync_playwright().start()
 
@@ -45,13 +46,16 @@ class PlaywrightWrapper:
 
         self.request_ua = request_ua
         self.request_timeout = request_timeout_sec * 1000
-        self.browser = self.p.chromium.launch(**self.get_browser_args())
+        if browser_set == 'chrome':
+            self.browser = self.p.chromium.launch(**self.get_browser_args())
+        elif browser_set == 'firefox':
+            self.browser = self.p.firefox.launch(**self.get_browser_args())
         self.context = self.browser.new_context(**self.get_browser_context_args())
         self.page = self.context.new_page()
 
     def get_browser_args(self):
         """Prepare browser args."""
-        browser_args = {"headless": True}
+        browser_args = {"headless": True, "args": ["--disable-http2"]}
 
         proxy_configured = (
                 self.proxy and 'url' in self.proxy and 'username' in self.proxy and 'password' in self.proxy
