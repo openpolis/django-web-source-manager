@@ -82,7 +82,7 @@ class PlaywrightWrapper:
     #     context = browser.new_context(**self.get_browser_context_args())
     #     return browser, context
 
-    def get_live_content(self, url, selector, **kwargs):
+    def get_live_content(self, url, selector, output_format, **kwargs):
         """
         Requests content from URI, using playwright (https://playwright.dev/python/)
 
@@ -125,8 +125,15 @@ class PlaywrightWrapper:
                             re.sub(regex, "\n", x.strip("- \n\t")) for x in content
                         )
                     else:
-                        content = locator.inner_text()
-                        content = re.sub(regex, "\n", content.strip("- \n\t"))
+                        if output_format == 'text':
+                            content = locator.inner_text()
+                            content = re.sub(regex, "\n", content.strip("- \n\t"))
+                        elif output_format == 'html':
+                            content = locator.inner_html()
+                        else:
+                            raise Exception("Invalid output format")
+
+
             else:
                 if status == 404:
                     content = "Pagina non trovata"

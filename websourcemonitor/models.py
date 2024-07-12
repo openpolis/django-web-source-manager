@@ -107,7 +107,7 @@ class Content(models.Model):
     def __str__(self):
         return self.title
 
-    def get_live_content(self, playwright_wrapper=None):
+    def get_live_content(self, playwright_wrapper=None, output_format='text'):
 
         if playwright_wrapper is None:
             pw = PlaywrightWrapper()
@@ -115,7 +115,7 @@ class Content(models.Model):
             pw = playwright_wrapper
 
         try:
-            (resp_code, resp_content) = pw.get_live_content(self.url, self.selector)
+            (resp_code, resp_content) = pw.get_live_content(self.url, self.selector, output_format)
             if playwright_wrapper is None:
                 pw.stop()
             return resp_code, resp_content
