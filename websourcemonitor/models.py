@@ -107,10 +107,10 @@ class Content(models.Model):
     def __str__(self):
         return self.title
 
-    def get_live_content(self, playwright_wrapper=None, output_format='text'):
+    def get_live_content(self, playwright_wrapper=None, output_format='text', browser='chrome'):
 
         if playwright_wrapper is None:
-            pw = PlaywrightWrapper()
+            pw = PlaywrightWrapper(browser_set=browser)
         else:
             pw = playwright_wrapper
 
