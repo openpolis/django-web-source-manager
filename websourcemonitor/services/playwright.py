@@ -34,17 +34,18 @@ class PlaywrightWrapper:
             browser_set: Optional[str] = 'chrome'
     ):
         self.p = sync_playwright().start()
-
+        self.use_proxy = use_proxy
         # if proxy was not passed among the arguments,
         # then check if it's in the settings
-        if self.use_proxy:
+        self.proxy = proxy
+        if self.use_proxy and proxy:
             self.proxy = proxy
-            if  proxy is None and PROXY_URL:
-                self.proxy = {
-                    'url': PROXY_URL,
-                    'username': PROXY_USERNAME,
-                    'password': PROXY_PASSWORD
-                }
+        if self.use_proxy and proxy is None and PROXY_URL:
+            self.proxy = {
+                'url': PROXY_URL,
+                'username': PROXY_USERNAME,
+                'password': PROXY_PASSWORD
+            }
 
         self.request_ua = request_ua
         self.request_timeout = request_timeout_sec * 1000
