@@ -37,7 +37,7 @@ class PlaywrightWrapper:
 
         # if proxy was not passed among the arguments,
         # then check if it's in the settings
-        if use_proxy:
+        if self.use_proxy:
             self.proxy = proxy
             if  proxy is None and PROXY_URL:
                 self.proxy = {
