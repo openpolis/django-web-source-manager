@@ -45,6 +45,12 @@ class Content(models.Model):
         (STATUS_UPDATED, 'Aggiornato alla destinazione'),
         (STATUS_SIGNALED, 'Errore segnalato'),
     )
+    CHROME = 'chrome'
+    FIREFOX = 'firefox'
+    BROWSER_CHOICES = (
+        (CHROME, 'chrome'),
+        (FIREFOX, 'Firefox'),
+    )
 
     title = models.CharField(
         max_length=512,
@@ -62,10 +68,17 @@ class Content(models.Model):
         help_text="URL della pagina OP contenente le istituzioni"
     )
     selector = models.CharField(blank=True, max_length=512)
+
     content = models.TextField(
         blank=True, null=True,
         verbose_name=_("Contenuto significativo")
     )
+
+    next_content = models.TextField(
+        blank=True, null=True,
+        verbose_name=_("Contenuto significativo nuovo")
+    )
+
     timeout = models.PositiveSmallIntegerField(
         blank=True, null=True,
     )
@@ -100,6 +113,12 @@ class Content(models.Model):
         verbose_name=_("Utilizza proxy IT")
     )
 
+    browser = models.CharField(
+        default=CHROME,
+        choices=BROWSER_CHOICES,
+        verbose_name=_("Browser")
+    )
+
     class Meta:
         verbose_name = 'contenuto'
         verbose_name_plural = 'contenuti'
@@ -111,7 +130,7 @@ class Content(models.Model):
                          use_proxy=False):
 
         if playwright_wrapper is None:
-            pw = PlaywrightWrapper(browser_set=browser, use_proxy=use_proxy, proxy=proxy)
+            pw = PlaywrightWrapper(browser_set=browser, use_proxy=use_proxy, proxy=use_proxy)
         else:
             pw = playwright_wrapper
 
@@ -140,7 +159,7 @@ class Content(models.Model):
                 self.verification_status = self.STATUS_NOT_CHANGED
 
             self.verification_error = None
-
+        self.next_content =resp_content
         self.verified_at = timezone.now()
         self.save()
 
@@ -148,15 +167,16 @@ class Content(models.Model):
 
     def update(self, playwright_wrapper=None):
         """updates db with live content; align verification status"""
-        (resp_code, resp_content) = self.get_live_content(playwright_wrapper=playwright_wrapper)
+        (resp_code, resp_content) = self.verification_status, self.next_content
 
-        if resp_code not in (200, 202):
+        if resp_code not in (Content.STATUS_ERROR, ):
             self.verification_status = Content.STATUS_ERROR
             self.verification_error = "ERRORE {0} ({1})".format(
                 resp_code, resp_content
             )
         else:
-            self.content = resp_content
+            self.content = self.next_content
+            self.next_content = None
             self.verification_status = self.STATUS_UPDATED
             self.verification_error = None
 
@@ -168,6 +188,7 @@ class Content(models.Model):
     def reset(self):
         """resets content and status, restart from scratch"""
         self.content = None
+        self.next_content = None
         self.verification_status = None
         self.verification_error = None
         self.verified_at = None
