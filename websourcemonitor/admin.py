@@ -37,7 +37,7 @@ class ContentAdmin(DjangoObjectActions, AdminRowActionsMixin, admin.ModelAdmin):
     fieldsets = (
         (None, {
             'fields': (
-                'title', 'source_type', 'timeout', 'browser','scraping_class', 'notes',
+                'title', 'source_type', 'timeout', 'browser','scraping_class', 'dati_specifici', 'notes',
                 'op_url', 'url', 'selector',
                 'use_cleaner', 'use_proxy',
                 'content'

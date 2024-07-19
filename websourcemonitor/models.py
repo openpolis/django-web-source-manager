@@ -121,6 +121,13 @@ class Content(models.Model):
     scraping_class = models.CharField(max_length=100,
                                       blank=True, null=True,
                                       )
+
+    dati_specifici = models.JSONField(
+        default=dict,
+        blank=True,
+        null=True,
+    )
+
     class Meta:
         verbose_name = 'contenuto'
         verbose_name_plural = 'contenuti'
