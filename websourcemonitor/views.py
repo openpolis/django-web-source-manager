@@ -18,7 +18,7 @@ def diff(request, content_id):
     """
 
     obj = Content.objects.get(pk=content_id)
-    (resp_code, resp_content) = obj.get_live_content()
+    (resp_code, resp_content) = obj.verification_status, obj.next_content
 
     live = resp_content.splitlines(1)
     if obj.content:

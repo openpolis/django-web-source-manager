@@ -8,8 +8,7 @@ DEFAULT_SMTP_PASSWORD = ''
 DEFAULT_EMAIL_SUBJECT_PREFIX = '[servizio monitoraggio comin] '
 DEFAULT_EMAIL_FROM = 'noreply@comin.it'
 DEFAULT_REQUESTS_MAX_TIMEOUT = 10
-DEFAULT_REQUESTS_UA = ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
-                       'Chrome/91.0.4472.124 Safari/537.36')
+DEFAULT_REQUESTS_UA = ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36')
 DEFAULT_PROXY_URL = ''
 DEFAULT_PROXY_USERNAME = ''
 DEFAULT_PROXY_PASSWORD = ''

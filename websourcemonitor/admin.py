@@ -37,7 +37,7 @@ class ContentAdmin(DjangoObjectActions, AdminRowActionsMixin, admin.ModelAdmin):
     fieldsets = (
         (None, {
             'fields': (
-                'title', 'source_type', 'timeout', 'notes',
+                'title', 'source_type', 'timeout', 'browser','scraping_class', 'notes',
                 'op_url', 'url', 'selector',
                 'use_cleaner', 'use_proxy',
                 'content'
@@ -66,7 +66,7 @@ class ContentAdmin(DjangoObjectActions, AdminRowActionsMixin, admin.ModelAdmin):
             msg = msg.upper()
         if obj.verification_status == 1:
             msg += mark_safe(
-                ' <a href="/diff/{0}" target="_blank"><img '
+                ' <a href="/websourcemonitor/diff/{0}" target="_blank"><img '
                 'src="/static/images/extlink.gif" alt="vai"/> '
                 'visualizza le differenze</a>'.format(obj.id)
             )
