@@ -118,7 +118,9 @@ class Content(models.Model):
         choices=BROWSER_CHOICES,
         verbose_name=_("Browser")
     )
-
+    scraping_class = models.CharField(max_length=100,
+                                      blank=True, null=True,
+                                      )
     class Meta:
         verbose_name = 'contenuto'
         verbose_name_plural = 'contenuti'
@@ -130,7 +132,7 @@ class Content(models.Model):
                          use_proxy=False):
 
         if playwright_wrapper is None:
-            pw = PlaywrightWrapper(browser_set=browser, use_proxy=use_proxy, proxy=use_proxy)
+            pw = PlaywrightWrapper(browser_set=browser, use_proxy=use_proxy)
         else:
             pw = playwright_wrapper
 
@@ -145,7 +147,8 @@ class Content(models.Model):
 
     def verify(self, playwright_wrapper=None):
 
-        (resp_code, resp_content) = self.get_live_content(playwright_wrapper=playwright_wrapper)
+        (resp_code, resp_content) = self.get_live_content(playwright_wrapper=playwright_wrapper,
+                                                          browser=self.browser)
 
         if resp_code not in (200, 202):
             self.verification_status = Content.STATUS_ERROR
@@ -169,7 +172,7 @@ class Content(models.Model):
         """updates db with live content; align verification status"""
         (resp_code, resp_content) = self.verification_status, self.next_content
 
-        if resp_code not in (Content.STATUS_ERROR, ):
+        if resp_code in (Content.STATUS_ERROR, ):
             self.verification_status = Content.STATUS_ERROR
             self.verification_error = "ERRORE {0} ({1})".format(
                 resp_code, resp_content
