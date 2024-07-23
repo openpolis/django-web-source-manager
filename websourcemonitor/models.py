@@ -155,7 +155,8 @@ class Content(models.Model):
     def verify(self, playwright_wrapper=None):
 
         (resp_code, resp_content) = self.get_live_content(playwright_wrapper=playwright_wrapper,
-                                                          browser=self.browser)
+                                                          browser=self.browser,
+                                                          use_proxy=self.use_proxy,)
 
         if resp_code not in (200, 202):
             self.verification_status = Content.STATUS_ERROR

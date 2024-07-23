@@ -57,6 +57,7 @@ class PlaywrightWrapper:
         self.context = self.browser.new_context(**self.get_browser_context_args())
         self.page = self.context.new_page()
 
+
     def get_browser_args(self):
         """Prepare browser args."""
         browser_args = {"headless": True, "args": ["--disable-http2"]}
@@ -97,6 +98,17 @@ class PlaywrightWrapper:
             tag['href'] = urljoin(base_url, tag['href'])
         return str(soup)
 
+    def by_pass_with_google(self, url):
+        self.page.goto(
+            f'https://www.google.it/search?q={url}',
+            wait_until="load", timeout=self.request_timeout)
+        self.page.query_selector_all('button')[-3].click()
+        with self.page.expect_navigation() as response_info:
+            self.page.query_selector_all('h3')[0].click()
+
+        response = response_info.value
+        return response
+
     def get_live_content(self, url, selector, output_format, **kwargs):
         """
         Requests content from URI, using playwright (https://playwright.dev/python/)
@@ -113,6 +125,9 @@ class PlaywrightWrapper:
 
         try:
             time_response_start = time.time()
+            response = self.page.goto(url, wait_until="load", timeout=self.request_timeout)
+            if 'captcha' in response.content().lower():
+                self.by_pass_with_google(url)
             response = self.page.goto(url, wait_until="load", timeout=self.request_timeout)
             time_response_took = time.time() - time_response_start
         except PlaywrightError as e:
