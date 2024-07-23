@@ -181,6 +181,6 @@ class PlaywrightWrapper:
         return status, content
 
     def stop(self):
-        self.browser.close()
         self.page.close()
+        self.browser.close()
         self.p.stop()
