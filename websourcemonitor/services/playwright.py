@@ -1,10 +1,11 @@
 import re
 import time
 from typing import Optional
-
+from bs4 import BeautifulSoup
 from playwright.sync_api import Browser
 from playwright.sync_api import sync_playwright, Error as PlaywrightError, Playwright
 from ..conf import *
+from urllib.parse import urljoin
 
 
 class PlaywrightWrapper:
@@ -89,6 +90,13 @@ class PlaywrightWrapper:
     #     context = browser.new_context(**self.get_browser_context_args())
     #     return browser, context
 
+    @staticmethod
+    def convert_relative_links_to_absolute(html, base_url):
+        soup = BeautifulSoup(html, 'html.parser')
+        for tag in soup.find_all('a', href=True):
+            tag['href'] = urljoin(base_url, tag['href'])
+        return str(soup)
+
     def get_live_content(self, url, selector, output_format, **kwargs):
         """
         Requests content from URI, using playwright (https://playwright.dev/python/)
@@ -127,16 +135,27 @@ class PlaywrightWrapper:
                         content = "Selettore non trovato"
 
                     elif count > 1:
-                        content = locator.all_inner_texts()
-                        content = "\n".join(
-                            re.sub(regex, "\n", x.strip("- \n\t")) for x in content
-                        )
+                        if output_format == 'text':
+                            content = locator.all_inner_texts()
+                            content = "\n".join(
+                                re.sub(regex, "\n", x.strip("- \n\t")) for x in content
+                            )
+                        elif output_format == 'html':
+                            base_url = url
+                            elements_html = [self.convert_relative_links_to_absolute(element.inner_html(), base_url) for
+                                             element in locator.element_handles()]
+
+                            content = ' '.join(elements_html)
                     else:
                         if output_format == 'text':
                             content = locator.inner_text()
                             content = re.sub(regex, "\n", content.strip("- \n\t"))
                         elif output_format == 'html':
-                            content = locator.inner_html()
+                            inner_html = locator.inner_html()
+                            base_url = url
+                            html_with_absolute_links = self.convert_relative_links_to_absolute(inner_html, base_url)
+                            content = html_with_absolute_links
+
                         else:
                             raise Exception("Invalid output format")
 
