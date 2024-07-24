@@ -99,6 +99,7 @@ class PlaywrightWrapper:
         soup = BeautifulSoup(html, 'html.parser')
         for tag in soup.find_all('a', href=True):
             tag['href'] = urljoin(base_url, tag['href'])
+            tag['target'] = '_blank'
         return str(soup)
 
     def by_pass_with_google(self, url):
