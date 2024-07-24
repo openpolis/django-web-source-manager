@@ -6,7 +6,8 @@ from playwright.sync_api import Browser
 from playwright.sync_api import sync_playwright, Error as PlaywrightError, Playwright
 from ..conf import *
 from urllib.parse import urljoin
-
+from playwright_stealth import stealth_sync
+import logging
 
 class PlaywrightWrapper:
     """Pooled playwright (https://playwright.dev) wrapper, that allows users to
@@ -32,8 +33,12 @@ class PlaywrightWrapper:
             proxy: Optional[dict] = None,
             request_ua: str = REQUESTS_UA,
             request_timeout_sec: int = REQUESTS_MAX_TIMEOUT,
-            browser_set: Optional[str] = 'chrome'
+            browser_set: Optional[str] = 'chrome',
+            logger: Optional[logging.Logger] = None
     ):
+        if not logger:
+            self.logger = logging.getLogger(f"project.{__name__}")
+            self.logger.setLevel(logging.INFO)
         self.p = sync_playwright().start()
         self.use_proxy = use_proxy
         # if proxy was not passed among the arguments,
@@ -56,7 +61,7 @@ class PlaywrightWrapper:
             self.browser = self.p.firefox.launch(**self.get_browser_args())
         self.context = self.browser.new_context(**self.get_browser_context_args())
         self.page = self.context.new_page()
-
+        stealth_sync(self.page)
 
     def get_browser_args(self):
         """Prepare browser args."""
@@ -126,9 +131,6 @@ class PlaywrightWrapper:
         try:
             time_response_start = time.time()
             response = self.page.goto(url, wait_until="load", timeout=self.request_timeout)
-            if 'captcha' in response.content().lower():
-                self.by_pass_with_google(url)
-            response = self.page.goto(url, wait_until="load", timeout=self.request_timeout)
             time_response_took = time.time() - time_response_start
         except PlaywrightError as e:
             status = 990
@@ -191,7 +193,7 @@ class PlaywrightWrapper:
         else:
             error_msg = content
 
-        print(f"{url} - {selector} - {status} - {error_msg} - {trt}")
+        self.logger.debug(f"{url} - {selector} - {status} - {error_msg} - {trt}")
 
         return status, content
 
