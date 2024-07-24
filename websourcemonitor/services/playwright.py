@@ -6,7 +6,6 @@ from playwright.sync_api import Browser
 from playwright.sync_api import sync_playwright, Error as PlaywrightError, Playwright
 from ..conf import *
 from urllib.parse import urljoin
-from playwright_stealth import stealth_sync
 import logging
 
 class PlaywrightWrapper:
@@ -61,7 +60,6 @@ class PlaywrightWrapper:
             self.browser = self.p.firefox.launch(**self.get_browser_args())
         self.context = self.browser.new_context(**self.get_browser_context_args())
         self.page = self.context.new_page()
-        stealth_sync(self.page)
 
     def get_browser_args(self):
         """Prepare browser args."""
