@@ -1,7 +1,12 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block page_title %}VerificaFonti - Visualizzatore differenze{% endblock %}
 {% block page_description %}Visualizzatore di differenze tra contenuto live e contenuto processato in OP{% endblock %}
+{% block css %}
+    {{ block.super }}
+    <link href="{% static 'websourcemonitor/css/diff.css' %}" rel="stylesheet" />
+{% endblock css %}
 {% block content %}
     <h1>{{ content.title }} </h1>
     <div>La tabella mostra <b>le differenze</b> tra il contenuto nel nostro DB (a sinistra), e il testo ora sul sito (a
